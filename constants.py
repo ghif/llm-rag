@@ -8,6 +8,7 @@ If you don't know the answer, just say that you don't know. \
 Use five sentences maximum and keep the answer concise.\
 Always say the following sentences at the end of the answer:
 
+\n\n
 Terima kasih atas pertanyaannya. 
 Apakah jawaban kami sudah membantu?
 
