@@ -5,12 +5,14 @@ from time import process_time
 
 import docproc as dp
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder, PromptTemplate
-from langchain_community.chat_models import ChatOpenAI
+from langchain_openai.chat_models import ChatOpenAI
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.messages import HumanMessage
 
 import constants as const
+
+import csv
 
 class RAGChainer:
     def __init__(self, 
@@ -25,7 +27,10 @@ class RAGChainer:
         """
         
         self.vectostore = vectorstore
-        self.retriever = vectorstore.as_retriever()
+        self.retriever = vectorstore.as_retriever(
+            search_type="mmr",
+            search_kwargs={"k":const.TOP_K}
+        )
 
         if llm_type == "openai":
             self.llm = ChatOpenAI(
@@ -106,7 +111,11 @@ if __name__ == "__main__":
         chunk_size=const.CHUNK_SIZE, 
         chunk_overlap=const.CHUNK_OVERLAP
     )
-    vectorstore = dp.create_vectorstore(chunks)
+
+    vectorstore = dp.create_vectorstore(
+        chunks,
+        embedding_type="sentence_transformer",
+    )
 
     rc = RAGChainer(
         vectorstore, 
@@ -125,17 +134,35 @@ if __name__ == "__main__":
         )
 
     # Test prompt-response
+    # queries = [
+    #     "apa yang dimaksud dengan BKD?",
+    #     "Bagaimana cara Pengelola BKD PTN menambah Periode BKD?",
+    #     "bagaimana mendaftar ke program kampus merdeka?"
+    # ]
+        
+    # Positive queries
     queries = [
-        "jelaskan tentang BKD",
-        "itu singkatan dari apa?",
-        "bagaimana mendaftar ke program kampus merdeka?"
+        "apa yang dimaksud dengan Beban Kerja Dosen?",
+        "apakah yang dimaksud dengan Asesor BKD?",
+        "Bagaimana cara untuk menjadi Asesor BKD?",
+        "apakah yang dimaksud dengan NIRA BKD?",
+        "Bagaimana jika saya memiliki NIRA ganda?"
     ]
+     # Write query-response to CSV
+    csv_filename = "testing2.csv"
+    fields = ["Query", "AI Response"]
+    csv_fhandler = open(csv_filename, 'w')
+    csvwriter = csv.writer(csv_fhandler, delimiter=';')
+
+    # writing the fields
+    csvwriter.writerow(fields)
 
     for query in queries:
         # Check retrieved docs
         retrieved_docs = rc.retriever.invoke(query)
         for i, rdoc in enumerate(retrieved_docs):
-            print(f"[{i}] {rdoc.page_content[:1000]}")
+            print(f"[{i}] {rdoc.page_content}")
+            print("\n")
         print(f"Retriever docs: {len(retrieved_docs)}")
 
         print(f"\nQuery: {query}\n")
@@ -159,3 +186,9 @@ if __name__ == "__main__":
 
         print(f"\nResponse ({elapsed_t:.2f}secs): \n")
         print(f"{response}\n")
+
+        csvwriter.writerow([query, response])
+
+    # end for
+        
+    csv_fhandler.close()

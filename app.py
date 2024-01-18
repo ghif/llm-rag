@@ -16,10 +16,13 @@ async def on_chat_start():
         chunk_size=const.CHUNK_SIZE,
         chunk_overlap=const.CHUNK_OVERLAP
     )
-    retriever = dp.create_vectorstore(chunks)
+    vectorstore = dp.create_vectorstore(
+        chunks,
+        embedding_type="sentence_transformer",
+    )
 
     chainer = rc.RAGChainer(
-        retriever, 
+        vectorstore, 
         llm_type="openai"
     )
 
@@ -41,8 +44,6 @@ async def on_chat_start():
 @cl.on_message
 async def on_message(message: cl.Message):
     chainer = cl.user_session.get("chainer")  
-    
-    
     runnable = chainer.rag_chain
 
     print(f"\n\nQuery: {message.content}\n\n")
