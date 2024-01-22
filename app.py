@@ -16,9 +16,15 @@ async def on_chat_start():
         chunk_size=const.CHUNK_SIZE,
         chunk_overlap=const.CHUNK_OVERLAP
     )
+    # vectorstore = dp.create_vectorstore(
+    #     chunks,
+    #     embedding_type="sentence_transformer",
+    # )
     vectorstore = dp.create_vectorstore(
         chunks,
-        embedding_type="sentence_transformer",
+        embedding_type="openai",
+        persist_directory="db-sister",
+        collection_name="vstore_openai_sister"
     )
 
     chainer = rc.RAGChainer(

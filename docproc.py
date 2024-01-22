@@ -46,12 +46,15 @@ def split_docs_into_chunks(
     )
 
     text_chunks = text_splitter.split_documents(docs)
-    token_splitter = SentenceTransformersTokenTextSplitter(
-        chunk_overlap=0,
-        model_name=const.SENTENCE_TRANSFORMER_MODEL_NAME
-    )
-    token_chunks = token_splitter.split_documents(text_chunks)
-    return token_chunks
+    # token_splitter = SentenceTransformersTokenTextSplitter(
+    #     chunk_overlap=0,
+    #     model_name=const.SENTENCE_TRANSFORMER_MODEL_NAME
+    # )
+    # token_chunks = token_splitter.split_documents(text_chunks)
+
+    # chunks = token_chunks
+    chunks = text_chunks
+    return chunks
 
 def create_vectorstore(
         chunks,
@@ -91,8 +94,8 @@ def format_docs(docs):
     return "\n\n".join(doc.page_content for doc in docs)
 
 if __name__ == "__main__":
-    # pdf_path = "data/cerita-rakyat-nusantara2.pdf"
-    pdf_path = "data/SSD_SISTER_BKD.pdf"
+    pdf_path = "data/cerita-rakyat-nusantara2.pdf"
+    # pdf_path = "data/SSD_SISTER_BKD.pdf"
     docs = get_docs_from_pdf(pdf_path=pdf_path)
     print(f"Number of pages: {len(docs)}")
 
@@ -106,14 +109,21 @@ if __name__ == "__main__":
     print(f"docs 0: {docs[0].page_content[:100]}")
     print(f"chunks 0: {chunks[0].page_content[:100]}")
 
+    # vectorstore = create_vectorstore(
+    #     chunks,
+    #     embedding_type="sentence_transformer",
+    # )
+
     vectorstore = create_vectorstore(
         chunks,
         embedding_type="sentence_transformer",
+        persist_directory="db-cerita",
+        collection_name="vstore_strans_cerita"
     )
 
     # query it
-    query = "Apa yang dimaksud dengan Beban Kerja Dosen?"
-    # query = "apa yang dimaksud dengan BKD?"
+    # query = "Apa yang dimaksud dengan Beban Kerja Dosen?"
+    query = "apa yang dimaksud dengan BKD?"
     # query = "Bagaimana cara Pengelola BKD PTN menambah Periode BKD?"
     # query = "bagaimana mendaftar ke program kampus merdeka?"
     # queries = [
@@ -132,7 +142,7 @@ if __name__ == "__main__":
 
     retriever = vectorstore.as_retriever(search_type="mmr", search_kwargs={"k": 5})
     response2 = retriever.invoke(query)
-    print(response2)
+    # print(response2)
 
     for i, res in enumerate(response2):
         # print(f"Score: {res.score}")

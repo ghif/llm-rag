@@ -66,6 +66,12 @@ class RAGChainer:
         )
 
     def init(self, qa_system_prompt: str):
+        """
+        Initialize RAG chain without history
+
+        Args:
+            qa_system_prompt (str): question answering system prompt
+        """
         self.rag_chain = self.create_rag_chain(qa_system_prompt)
         
 
@@ -114,8 +120,17 @@ if __name__ == "__main__":
 
     vectorstore = dp.create_vectorstore(
         chunks,
-        embedding_type="sentence_transformer",
+        embedding_type="openai",
+        persist_directory="db-sister",
+        collection_name="vstore_openai_sister"
     )
+
+    # vectorstore = dp.create_vectorstore(
+    #     chunks,
+    #     embedding_type="sentence_transformer",
+    #     persist_directory="db-cerita",
+    #     collection_name="vstore_strans_cerita"
+    # )
 
     rc = RAGChainer(
         vectorstore, 
@@ -142,14 +157,23 @@ if __name__ == "__main__":
         
     # Positive queries
     queries = [
+        "apa kepanjangan dari BKD?",
         "apa yang dimaksud dengan Beban Kerja Dosen?",
         "apakah yang dimaksud dengan Asesor BKD?",
         "Bagaimana cara untuk menjadi Asesor BKD?",
         "apakah yang dimaksud dengan NIRA BKD?",
-        "Bagaimana jika saya memiliki NIRA ganda?"
+        "Bagaimana jika saya memiliki NIRA ganda?",
+        "bagaimana caranya mendaftar kampus merdeka?"
     ]
+        
+    # queries = [
+    #     "siapakah Ki Ageng Pandanaran?"
+    # ]
+        
+    
      # Write query-response to CSV
-    csv_filename = "testing2.csv"
+    # csv_filename = "testing_cerita-rakyat.csv"
+    csv_filename = "testing_sister_openai-embeddings.csv"
     fields = ["Query", "AI Response"]
     csv_fhandler = open(csv_filename, 'w')
     csvwriter = csv.writer(csv_fhandler, delimiter=';')
