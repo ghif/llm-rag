@@ -8,23 +8,14 @@ import docproc as dp
 
 import chainlit as cl
 
+import constants as const
+
 @cl.on_chat_start
 async def on_chat_start():
-    docs = dp.get_docs_from_pdf(pdf_path=const.PDF_PATH)
-    chunks = dp.split_docs_into_chunks(
-        docs, 
-        chunk_size=const.CHUNK_SIZE,
-        chunk_overlap=const.CHUNK_OVERLAP
-    )
-    # vectorstore = dp.create_vectorstore(
-    #     chunks,
-    #     embedding_type="sentence_transformer",
-    # )
-    vectorstore = dp.create_vectorstore(
-        chunks,
+    vectorstore = dp.load_vectorstore(
+        "db-sister",
+        f"vstore_openai_sister_cs{const.CHUNK_SIZE}_co{const.CHUNK_OVERLAP}",
         embedding_type="openai",
-        persist_directory="db-sister",
-        collection_name="vstore_openai_sister"
     )
 
     chainer = rc.RAGChainer(
@@ -45,7 +36,6 @@ async def on_chat_start():
         )
 
     cl.user_session.set("chainer", chainer)
-
 
 @cl.on_message
 async def on_message(message: cl.Message):

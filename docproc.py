@@ -71,7 +71,7 @@ def create_vectorstore(
     """
 
     if embedding_type == "openai":
-        embedding_function = OpenAIEmbeddings()
+        embedding_function = OpenAIEmbeddings(model="text-embedding-ada-002")
     elif embedding_type == "sentence_transformer":
         embedding_function = SentenceTransformerEmbeddings(
             model_name=const.SENTENCE_TRANSFORMER_MODEL_NAME
@@ -89,6 +89,21 @@ def create_vectorstore(
 #         persist_directory="db",
 #         collection_name="vstore_sister_ssd"
 #     )
+
+def load_vectorstore(
+        persist_directory:str,
+        collection_name:str,
+        embedding_type:str="openai"
+    ):
+    if embedding_type == "openai":
+        embedding_function = OpenAIEmbeddings(model="text-embedding-ada-002")
+
+    db = Chroma(
+        persist_directory=persist_directory,
+        collection_name=collection_name, 
+        embedding_function=embedding_function
+    )
+    return db
 
 def format_docs(docs):
     return "\n\n".join(doc.page_content for doc in docs)

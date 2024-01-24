@@ -122,15 +122,8 @@ if __name__ == "__main__":
         chunks,
         embedding_type="openai",
         persist_directory="db-sister",
-        collection_name="vstore_openai_sister"
+        collection_name=f"vstore_openai_sister_cs{const.CHUNK_SIZE}_co{const.CHUNK_OVERLAP}"
     )
-
-    # vectorstore = dp.create_vectorstore(
-    #     chunks,
-    #     embedding_type="sentence_transformer",
-    #     persist_directory="db-cerita",
-    #     collection_name="vstore_strans_cerita"
-    # )
 
     rc = RAGChainer(
         vectorstore, 
@@ -166,13 +159,8 @@ if __name__ == "__main__":
         "bagaimana caranya mendaftar kampus merdeka?"
     ]
         
-    # queries = [
-    #     "siapakah Ki Ageng Pandanaran?"
-    # ]
-        
     
      # Write query-response to CSV
-    # csv_filename = "testing_cerita-rakyat.csv"
     csv_filename = "testing_sister_openai-embeddings.csv"
     fields = ["Query", "AI Response"]
     csv_fhandler = open(csv_filename, 'w')
