@@ -1,13 +1,9 @@
 # Simple Realtime Augmented Generation with Chainlit
 
-This repository demonstrates a simple implementation of Realtime Augmented Generation using Chainlit. It showcases how to integrate Chainlit with LLMs to generate and augment content in real-time. The project includes examples and documentation to help you get started quickly.
+This repository demonstrates a simple implementation of Realtime Augmented Generation using Chainlit. It showcases how to integrate Chainlit with LLMs through LangChain to generate and augment content in real-time. The project includes examples and documentation to help you get started quickly.
 
 ## Features
-
-- Realtime content generation
-- Integration with multiple AI models
-- Easy-to-follow examples
-- Comprehensive documentation
+- Integration with multiple AI models (OpenAI GPT and VertexAI Gemini)
 
 ## Getting Started
 
