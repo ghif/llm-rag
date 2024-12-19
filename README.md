@@ -1,4 +1,4 @@
-# Simple Realtime Augmented Generation with Chainlit
+# Simple Realtime Augmented Generation (RAG) with LangChain and Chainlit
 
 This repository demonstrates a simple implementation of Realtime Augmented Generation using Chainlit. It showcases how to integrate Chainlit with LLMs through LangChain to generate and augment content in real-time. The project includes examples and documentation to help you get started quickly.
 
