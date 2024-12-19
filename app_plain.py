@@ -7,7 +7,7 @@ import constants as const
 
 @cl.on_chat_start
 async def on_chat_start():
-    ch = pc.Chainer(llm_type="openai")
+    ch = pc.Chainer(llm_type="vertexai")
     ch.init(const.STANDARD_SYSTEM_PROMPT)
     
     cl.user_session.set("chainer", ch.chain)

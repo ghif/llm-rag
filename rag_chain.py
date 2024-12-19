@@ -5,7 +5,8 @@ from time import process_time
 
 import docproc as dp
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder, PromptTemplate
-from langchain_openai.chat_models import ChatOpenAI
+# from langchain_openai import ChatOpenAI
+from langchain_google_vertexai import ChatVertexAI
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.messages import HumanMessage
@@ -37,6 +38,11 @@ class RAGChainer:
                 model_name=const.MODEL_NAME, 
                 temperature=const.TEMPERATURE,
                 streaming=const.STREAMING
+            )
+
+        elif llm_type == "vertexai":
+            self.llm = ChatVertexAI(
+                model=const.GEMINI_MODEL_NAME
             )
 
         self.q_chain = None
@@ -120,14 +126,16 @@ if __name__ == "__main__":
 
     vectorstore = dp.create_vectorstore(
         chunks,
-        embedding_type="openai",
-        persist_directory="db-sister",
+        # embedding_type="openai",
+        embedding_type="vertexai",
+        persist_directory="db-sister-vertexai",
         collection_name=f"vstore_openai_sister_cs{const.CHUNK_SIZE}_co{const.CHUNK_OVERLAP}"
     )
 
     rc = RAGChainer(
         vectorstore, 
-        llm_type="openai"
+        # llm_type="openai"
+        llm_type="vertexai"
     )
 
     if const.WITH_HISTORY:    

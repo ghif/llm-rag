@@ -13,14 +13,17 @@ import constants as const
 @cl.on_chat_start
 async def on_chat_start():
     vectorstore = dp.load_vectorstore(
-        "db-sister",
+        # "db-sister",
+        "db-sister-vertexai",
         f"vstore_openai_sister_cs{const.CHUNK_SIZE}_co{const.CHUNK_OVERLAP}",
-        embedding_type="openai",
+        # embedding_type="openai",
+        embedding_type="vertexai"
     )
 
     chainer = rc.RAGChainer(
         vectorstore, 
-        llm_type="openai"
+        # llm_type="openai"
+        llm_type="vertexai"
     )
 
     if const.WITH_HISTORY:

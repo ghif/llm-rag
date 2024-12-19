@@ -4,7 +4,8 @@ _ = load_dotenv(find_dotenv())
 from langchain_community.document_loaders import PyMuPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter, SentenceTransformersTokenTextSplitter
 from langchain_community.vectorstores import Chroma
-from langchain_openai.embeddings import OpenAIEmbeddings
+# from langchain_openai.embeddings import OpenAIEmbeddings
+from langchain_google_vertexai import VertexAIEmbeddings
 from langchain_community.embeddings.sentence_transformer import (
     SentenceTransformerEmbeddings,
 )
@@ -76,7 +77,10 @@ def create_vectorstore(
         embedding_function = SentenceTransformerEmbeddings(
             model_name=const.SENTENCE_TRANSFORMER_MODEL_NAME
         )
+    elif embedding_type == "vertexai":
+        embedding_function = VertexAIEmbeddings(model="text-embedding-004")
 
+    print(f"Creating vectorstore with embedding type: {embedding_type}")
     vectorstore = Chroma.from_documents(
         documents=chunks, 
         embedding=embedding_function,
@@ -97,6 +101,8 @@ def load_vectorstore(
     ):
     if embedding_type == "openai":
         embedding_function = OpenAIEmbeddings(model="text-embedding-ada-002")
+    elif embedding_type == "vertexai":
+        embedding_function = VertexAIEmbeddings(model="text-embedding-004")
 
     db = Chroma(
         persist_directory=persist_directory,
@@ -109,8 +115,8 @@ def format_docs(docs):
     return "\n\n".join(doc.page_content for doc in docs)
 
 if __name__ == "__main__":
-    pdf_path = "data/cerita-rakyat-nusantara2.pdf"
-    # pdf_path = "data/SSD_SISTER_BKD.pdf"
+    # pdf_path = "data/cerita-rakyat-nusantara2.pdf"
+    pdf_path = "data/SSD_SISTER_BKD.pdf"
     docs = get_docs_from_pdf(pdf_path=pdf_path)
     print(f"Number of pages: {len(docs)}")
 
@@ -131,9 +137,9 @@ if __name__ == "__main__":
 
     vectorstore = create_vectorstore(
         chunks,
-        embedding_type="sentence_transformer",
-        persist_directory="db-cerita",
-        collection_name="vstore_strans_cerita"
+        embedding_type="vertexai",
+        persist_directory="db-sister-vertexai",
+        collection_name="vstore_strans_sister_vertexai"
     )
 
     # query it

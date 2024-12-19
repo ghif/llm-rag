@@ -3,7 +3,8 @@ _ = load_dotenv(find_dotenv())
 
 import constants as const
 
-from langchain_openai import ChatOpenAI
+# from langchain_openai import ChatOpenAI
+from langchain_google_vertexai import ChatVertexAI
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.prompts import PromptTemplate
@@ -19,6 +20,10 @@ class Chainer:
                 model_name=const.MODEL_NAME, 
                 temperature=const.TEMPERATURE,
                 streaming=const.STREAMING
+            )
+        elif llm_type == "vertexai":
+            self.llm = ChatVertexAI(
+                model=const.GEMINI_MODEL_NAME
             )
         
         self.chain = None
@@ -36,7 +41,7 @@ class Chainer:
         return chain
 
 if __name__ == "__main__":
-    ch = Chainer(llm_type="openai")
+    ch = Chainer(llm_type="gemini")
     ch.init(const.STANDARD_SYSTEM_PROMPT)
 
     query = "apa yang dimaksud dengan NIRA BKD?"
